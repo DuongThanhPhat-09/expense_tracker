@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pandoc \"C:/Users/ADMIN/Desktop/personal_project/expense_tracker/PRD.docx\" -o /tmp/prd_output.md)",
+      "Bash(python scripts/office/unpack.py \"C:/Users/ADMIN/Desktop/personal_project/expense_tracker/PRD.docx\" /tmp/prd_unpacked/)",
+      "Bash(python \"C:/Users/ADMIN/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/a47033fa-0113-4d8f-abd9-d05c449171d0/558d631a-0499-4a81-8848-35cb2c4ad359/skills/docx/scripts/office/unpack.py\" \"C:/Users/ADMIN/Desktop/personal_project/expense_tracker/PRD.docx\" /tmp/prd_unpacked/)",
+      "Bash(pip install:*)",
+      "Bash(python \"C:/Users/ADMIN/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/a47033fa-0113-4d8f-abd9-d05c449171d0/558d631a-0499-4a81-8848-35cb2c4ad359/skills/docx/scripts/office/unpack.py\" \"C:/Users/ADMIN/Desktop/personal_project/expense_tracker/PRD_ExpenseTracker.docx\" /tmp/prd_unpacked/)",
+      "Bash(cygpath -w /tmp/prd_unpacked/word/document.xml)",
+      "Read(//c/Users/ADMIN/AppData/Local/Temp/**)",
+      "Bash(python -c ':*)",
+      "Bash(npm create:*)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(node --check server.js)",
+      "Bash(npx vite:*)",
+      "Bash(node -e \"const pkg = require\\('./node_modules/express/package.json'\\); console.log\\('Express version:', pkg.version\\)\")",
+      "Bash(mongod --version)",
+      "Bash(mongosh --version)",
+      "Bash(mongo --version)",
+      "Read(//c/Program Files/MongoDB/**)",
+      "Read(//c/Program Files \\(x86\\)/**)",
+      "Bash(where mongod:*)",
+      "Bash(where mongosh:*)",
+      "Bash(\"C:/Program Files/MongoDB/Server/8.0/bin/mongod.exe\" --version)",
+      "Bash(sc query:*)",
+      "Bash(net start:*)",
+      "Bash(npm run:*)",
+      "mcp__Claude_Preview__preview_start"
+    ]
+  }
+}
