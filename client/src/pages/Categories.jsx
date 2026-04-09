@@ -6,6 +6,9 @@ import {
   HiOutlinePencilSquare,
   HiOutlineTrash,
   HiOutlineXMark,
+  HiOutlineArrowTrendingDown,
+  HiOutlineArrowTrendingUp,
+  HiOutlineCheck,
 } from 'react-icons/hi2';
 
 const PRESET_COLORS = [
@@ -42,7 +45,7 @@ const Categories = () => {
       const res = await api.get('/api/categories');
       setCategories(res.data);
     } catch {
-      toast.error('Khong the tai danh muc');
+      toast.error('Không thể tải danh mục');
     } finally {
       setLoading(false);
     }
@@ -71,7 +74,7 @@ const Categories = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name.trim()) {
-      toast.error('Vui long nhap ten danh muc');
+      toast.error('Vui lòng nhập tên danh mục');
       return;
     }
 
@@ -79,15 +82,15 @@ const Categories = () => {
     try {
       if (editingCat) {
         await api.put(`/api/categories/${editingCat._id}`, formData);
-        toast.success('Cap nhat danh muc thanh cong');
+        toast.success('Cập nhật danh mục thành công');
       } else {
         await api.post('/api/categories', formData);
-        toast.success('Them danh muc thanh cong');
+        toast.success('Thêm danh mục thành công');
       }
       closeModal();
       fetchCategories();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Co loi xay ra');
+      toast.error(err.response?.data?.message || 'Có lỗi xảy ra');
     } finally {
       setSubmitting(false);
     }
@@ -97,16 +100,19 @@ const Categories = () => {
     if (!deleteId) return;
     try {
       await api.delete(`/api/categories/${deleteId}`);
-      toast.success('Xoa danh muc thanh cong');
+      toast.success('Xóa danh mục thành công');
       setDeleteId(null);
       fetchCategories();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Khong the xoa danh muc');
+      toast.error(err.response?.data?.message || 'Không thể xóa danh mục');
     }
   };
 
   const CategoryCard = ({ cat }) => (
-    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+    <div
+      className="flex items-center justify-between p-3.5 bg-gray-50 rounded-xl hover:shadow-md transition-all duration-200 border border-transparent hover:border-gray-200"
+      style={{ borderLeftWidth: '4px', borderLeftColor: cat.color || '#6b7280' }}
+    >
       <div className="flex items-center gap-3">
         <div
           className="w-4 h-4 rounded-full flex-shrink-0"
@@ -118,7 +124,7 @@ const Categories = () => {
         <button
           onClick={() => openEditModal(cat)}
           className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
-          title="Chinh sua"
+          title="Chỉnh sửa"
         >
           <HiOutlinePencilSquare className="w-4 h-4" />
         </button>
@@ -126,7 +132,7 @@ const Categories = () => {
           <button
             onClick={() => setDeleteId(cat._id)}
             className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-            title="Xoa"
+            title="Xóa"
           >
             <HiOutlineTrash className="w-4 h-4" />
           </button>
@@ -147,22 +153,23 @@ const Categories = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Danh muc</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Danh mục</h1>
         <button
           onClick={openAddModal}
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors"
+          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-sm hover:shadow-md"
         >
           <HiOutlinePlus className="w-4 h-4" />
-          Them danh muc
+          Thêm danh mục
         </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Expense Categories */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Chi tieu
-            <span className="ml-2 text-sm font-normal text-gray-400">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <HiOutlineArrowTrendingDown className="w-5 h-5 text-red-500" />
+            Chi tiêu
+            <span className="text-sm font-normal text-gray-400">
               ({expenseCategories.length})
             </span>
           </h2>
@@ -173,15 +180,16 @@ const Categories = () => {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-gray-400 text-center py-4">Chua co danh muc chi tieu</p>
+            <p className="text-sm text-gray-400 text-center py-4">Chưa có danh mục chi tiêu</p>
           )}
         </div>
 
         {/* Income Categories */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Thu nhap
-            <span className="ml-2 text-sm font-normal text-gray-400">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <HiOutlineArrowTrendingUp className="w-5 h-5 text-green-500" />
+            Thu nhập
+            <span className="text-sm font-normal text-gray-400">
               ({incomeCategories.length})
             </span>
           </h2>
@@ -192,7 +200,7 @@ const Categories = () => {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-gray-400 text-center py-4">Chua co danh muc thu nhap</p>
+            <p className="text-sm text-gray-400 text-center py-4">Chưa có danh mục thu nhập</p>
           )}
         </div>
       </div>
@@ -200,11 +208,11 @@ const Categories = () => {
       {/* Add/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="fixed inset-0 bg-black/50" onClick={closeModal} />
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={closeModal} />
+          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-semibold text-gray-900">
-                {editingCat ? 'Chinh sua danh muc' : 'Them danh muc moi'}
+                {editingCat ? 'Chỉnh sửa danh mục' : 'Thêm danh mục mới'}
               </h2>
               <button
                 onClick={closeModal}
@@ -217,21 +225,21 @@ const Categories = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Ten danh muc</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Tên danh mục</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Nhap ten danh muc"
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="Nhập tên danh mục"
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   required
                 />
               </div>
 
               {/* Type */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Loai</label>
-                <div className="flex rounded-lg border border-gray-300 overflow-hidden">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Loại</label>
+                <div className="flex rounded-xl border border-gray-300 overflow-hidden">
                   <button
                     type="button"
                     onClick={() => setFormData({ ...formData, type: 'expense' })}
@@ -241,7 +249,7 @@ const Categories = () => {
                         : 'bg-white text-gray-600 hover:bg-gray-50'
                     }`}
                   >
-                    Chi tieu
+                    Chi tiêu
                   </button>
                   <button
                     type="button"
@@ -252,25 +260,31 @@ const Categories = () => {
                         : 'bg-white text-gray-600 hover:bg-gray-50'
                     }`}
                   >
-                    Thu nhap
+                    Thu nhập
                   </button>
                 </div>
               </div>
 
               {/* Color Picker */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Mau sac</label>
-                <div className="flex flex-wrap gap-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Màu sắc</label>
+                <div className="flex flex-wrap gap-2.5">
                   {PRESET_COLORS.map((color) => (
                     <button
                       key={color}
                       type="button"
                       onClick={() => setFormData({ ...formData, color })}
-                      className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 ${
-                        formData.color === color ? 'border-gray-900 scale-110' : 'border-transparent'
+                      className={`w-9 h-9 rounded-full border-2 transition-all duration-200 hover:scale-110 flex items-center justify-center ${
+                        formData.color === color
+                          ? 'border-gray-900 scale-110 ring-2 ring-offset-2 ring-gray-300'
+                          : 'border-transparent'
                       }`}
                       style={{ backgroundColor: color }}
-                    />
+                    >
+                      {formData.color === color && (
+                        <HiOutlineCheck className="w-4 h-4 text-white drop-shadow-md" />
+                      )}
+                    </button>
                   ))}
                 </div>
               </div>
@@ -280,16 +294,16 @@ const Categories = () => {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="flex-1 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="flex-1 py-2.5 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                 >
-                  Huy
+                  Hủy
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+                  className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-medium transition-colors disabled:opacity-50"
                 >
-                  {submitting ? 'Dang luu...' : editingCat ? 'Cap nhat' : 'Them'}
+                  {submitting ? 'Đang lưu...' : editingCat ? 'Cập nhật' : 'Thêm'}
                 </button>
               </div>
             </form>
@@ -300,24 +314,24 @@ const Categories = () => {
       {/* Delete Confirmation */}
       {deleteId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="fixed inset-0 bg-black/50" onClick={() => setDeleteId(null)} />
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Xac nhan xoa</h3>
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setDeleteId(null)} />
+          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Xác nhận xóa</h3>
             <p className="text-sm text-gray-500 mb-5">
-              Ban co chac chan muon xoa danh muc nay? Cac giao dich lien quan se khong bi anh huong.
+              Bạn có chắc chắn muốn xóa danh mục này? Các giao dịch liên quan sẽ không bị ảnh hưởng.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setDeleteId(null)}
-                className="flex-1 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex-1 py-2.5 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
-                Huy
+                Hủy
               </button>
               <button
                 onClick={handleDelete}
-                className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors"
+                className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-medium transition-colors"
               >
-                Xoa
+                Xóa
               </button>
             </div>
           </div>

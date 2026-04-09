@@ -9,6 +9,8 @@ import {
   HiOutlineFunnel,
   HiOutlineChevronLeft,
   HiOutlineChevronRight,
+  HiOutlineExclamationTriangle,
+  HiOutlineBanknotes,
 } from 'react-icons/hi2';
 
 const formatVND = (amount) =>
@@ -74,7 +76,7 @@ const Transactions = () => {
       setTransactions(res.data.transactions || res.data);
       setTotalPages(res.data.totalPages || 1);
     } catch {
-      toast.error('Khong the tai danh sach giao dich');
+      toast.error('Không thể tải danh sách giao dịch');
     } finally {
       setLoading(false);
     }
@@ -112,7 +114,7 @@ const Transactions = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.amount || !formData.category) {
-      toast.error('Vui long nhap so tien va danh muc');
+      toast.error('Vui lòng nhập số tiền và danh mục');
       return;
     }
 
@@ -120,15 +122,15 @@ const Transactions = () => {
     try {
       if (editingTx) {
         await api.put(`/api/transactions/${editingTx._id}`, formData);
-        toast.success('Cap nhat giao dich thanh cong');
+        toast.success('Cập nhật giao dịch thành công');
       } else {
         await api.post('/api/transactions', formData);
-        toast.success('Them giao dich thanh cong');
+        toast.success('Thêm giao dịch thành công');
       }
       closeModal();
       fetchTransactions();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Co loi xay ra');
+      toast.error(err.response?.data?.message || 'Có lỗi xảy ra');
     } finally {
       setSubmitting(false);
     }
@@ -138,11 +140,11 @@ const Transactions = () => {
     if (!deleteId) return;
     try {
       await api.delete(`/api/transactions/${deleteId}`);
-      toast.success('Xoa giao dich thanh cong');
+      toast.success('Xóa giao dịch thành công');
       setDeleteId(null);
       fetchTransactions();
     } catch {
-      toast.error('Khong the xoa giao dich');
+      toast.error('Không thể xóa giao dịch');
     }
   };
 
@@ -154,39 +156,41 @@ const Transactions = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Giao dich</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Giao dịch</h1>
         <button
           onClick={openAddModal}
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors"
+          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg active:scale-95"
         >
           <HiOutlinePlus className="w-4 h-4" />
-          Them giao dich
+          Thêm giao dịch
         </button>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4">
         <div className="flex items-center gap-2 mb-3">
-          <HiOutlineFunnel className="w-4 h-4 text-gray-500" />
-          <span className="text-sm font-medium text-gray-700">Bo loc</span>
+          <div className="p-1.5 bg-indigo-50 rounded-lg">
+            <HiOutlineFunnel className="w-4 h-4 text-indigo-600" />
+          </div>
+          <span className="text-sm font-semibold text-gray-700">Bộ lọc</span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
           <select
             value={filterType}
             onChange={(e) => { setFilterType(e.target.value); setPage(1); }}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="px-3 py-2 border border-gray-200 rounded-full text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
           >
-            <option value="">Tat ca loai</option>
-            <option value="income">Thu nhap</option>
-            <option value="expense">Chi tieu</option>
+            <option value="">Tất cả loại</option>
+            <option value="income">Thu nhập</option>
+            <option value="expense">Chi tiêu</option>
           </select>
 
           <select
             value={filterCategory}
             onChange={(e) => { setFilterCategory(e.target.value); setPage(1); }}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="px-3 py-2 border border-gray-200 rounded-full text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
           >
-            <option value="">Tat ca danh muc</option>
+            <option value="">Tất cả danh mục</option>
             {categories
               .filter((c) => !filterType || c.type === filterType)
               .map((cat) => (
@@ -196,177 +200,224 @@ const Transactions = () => {
               ))}
           </select>
 
-          <input
-            type="date"
-            value={filterStartDate}
-            onChange={(e) => { setFilterStartDate(e.target.value); setPage(1); }}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="Tu ngay"
-          />
+          <div className="relative">
+            <input
+              type="date"
+              value={filterStartDate}
+              onChange={(e) => { setFilterStartDate(e.target.value); setPage(1); }}
+              className="w-full px-3 py-2 border border-gray-200 rounded-full text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+              placeholder="Từ ngày"
+            />
+          </div>
 
-          <input
-            type="date"
-            value={filterEndDate}
-            onChange={(e) => { setFilterEndDate(e.target.value); setPage(1); }}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="Den ngay"
-          />
+          <div className="relative">
+            <input
+              type="date"
+              value={filterEndDate}
+              onChange={(e) => { setFilterEndDate(e.target.value); setPage(1); }}
+              className="w-full px-3 py-2 border border-gray-200 rounded-full text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+              placeholder="Đến ngày"
+            />
+          </div>
         </div>
       </div>
 
       {/* Transactions List */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+      <div className="space-y-3">
         {loading ? (
-          <div className="flex items-center justify-center h-40">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm flex items-center justify-center h-40">
+            <div className="flex flex-col items-center gap-3">
+              <div className="animate-spin rounded-full h-8 w-8 border-[3px] border-gray-200 border-t-indigo-600"></div>
+              <span className="text-sm text-gray-400">Đang tải...</span>
+            </div>
           </div>
         ) : transactions.length > 0 ? (
-          <div className="divide-y divide-gray-100">
+          <>
             {transactions.map((tx) => (
-              <div key={tx._id} className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div
-                    className="w-3 h-3 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: tx.category?.color || '#6b7280' }}
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {tx.description || tx.category?.name || 'Khong co mo ta'}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {tx.category?.name || ''} {' - '}
-                      {new Date(tx.date).toLocaleDateString('vi-VN')}
-                    </p>
+              <div
+                key={tx._id}
+                className={`bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden border-l-4 ${
+                  tx.type === 'income' ? 'border-l-emerald-500' : 'border-l-red-400'
+                }`}
+              >
+                <div className="flex items-center justify-between p-4">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                      style={{
+                        backgroundColor: tx.category?.color
+                          ? `${tx.category.color}18`
+                          : '#f3f4f6',
+                      }}
+                    >
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: tx.category?.color || '#6b7280' }}
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-gray-900 truncate">
+                        {tx.description || tx.category?.name || 'Không có mô tả'}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        {tx.category?.name || ''} &middot;{' '}
+                        {new Date(tx.date).toLocaleDateString('vi-VN')}
+                      </p>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`text-sm font-semibold whitespace-nowrap ${
-                      tx.type === 'income' ? 'text-green-600' : 'text-red-600'
-                    }`}
-                  >
-                    {tx.type === 'income' ? '+' : '-'}{formatVND(tx.amount)}
-                  </span>
+                  <div className="flex items-center gap-4">
+                    <span
+                      className={`text-base font-bold whitespace-nowrap ${
+                        tx.type === 'income' ? 'text-emerald-600' : 'text-red-500'
+                      }`}
+                    >
+                      {tx.type === 'income' ? '+' : '-'}{formatVND(tx.amount)}
+                    </span>
 
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => openEditModal(tx)}
-                      className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
-                      title="Chinh sua"
-                    >
-                      <HiOutlinePencilSquare className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => setDeleteId(tx._id)}
-                      className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                      title="Xoa"
-                    >
-                      <HiOutlineTrash className="w-4 h-4" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => openEditModal(tx)}
+                        className="p-2 rounded-xl text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200"
+                        title="Chỉnh sửa"
+                      >
+                        <HiOutlinePencilSquare className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => setDeleteId(tx._id)}
+                        className="p-2 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all duration-200"
+                        title="Xóa"
+                      >
+                        <HiOutlineTrash className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
-          </div>
+          </>
         ) : (
-          <div className="text-center py-12 text-gray-400">
-            <p className="text-sm">Chua co giao dich nao</p>
-          </div>
-        )}
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2 p-4 border-t border-gray-100">
-            <button
-              onClick={() => setPage(Math.max(1, page - 1))}
-              disabled={page <= 1}
-              className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            >
-              <HiOutlineChevronLeft className="w-4 h-4" />
-            </button>
-            <span className="text-sm text-gray-600">
-              Trang {page} / {totalPages}
-            </span>
-            <button
-              onClick={() => setPage(Math.min(totalPages, page + 1))}
-              disabled={page >= totalPages}
-              className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            >
-              <HiOutlineChevronRight className="w-4 h-4" />
-            </button>
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm text-center py-16 px-6">
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-20 h-20 rounded-2xl bg-gray-50 flex items-center justify-center">
+                <HiOutlineBanknotes className="w-10 h-10 text-gray-300" />
+              </div>
+              <div>
+                <p className="text-base font-semibold text-gray-400">Chưa có giao dịch nào</p>
+                <p className="text-sm text-gray-300 mt-1">
+                  Nhấn &quot;Thêm giao dịch&quot; để bắt đầu theo dõi chi tiêu
+                </p>
+              </div>
+              <button
+                onClick={openAddModal}
+                className="mt-2 flex items-center gap-2 text-indigo-600 hover:text-indigo-700 text-sm font-medium transition-colors"
+              >
+                <HiOutlinePlus className="w-4 h-4" />
+                Thêm giao dịch mới
+              </button>
+            </div>
           </div>
         )}
       </div>
 
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-3 pt-2">
+          <button
+            onClick={() => setPage(Math.max(1, page - 1))}
+            disabled={page <= 1}
+            className="p-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50 hover:shadow-md disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:shadow-sm transition-all duration-200"
+          >
+            <HiOutlineChevronLeft className="w-4 h-4" />
+          </button>
+          <span className="text-sm font-medium text-gray-600 bg-white px-4 py-2 rounded-full border border-gray-200 shadow-sm">
+            Trang {page} / {totalPages}
+          </span>
+          <button
+            onClick={() => setPage(Math.min(totalPages, page + 1))}
+            disabled={page >= totalPages}
+            className="p-2.5 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50 hover:shadow-md disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:shadow-sm transition-all duration-200"
+          >
+            <HiOutlineChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {/* Add/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="fixed inset-0 bg-black/50" onClick={closeModal} />
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md p-6">
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-semibold text-gray-900">
-                {editingTx ? 'Chinh sua giao dich' : 'Them giao dich moi'}
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300"
+            onClick={closeModal}
+          />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-[modalIn_0.2s_ease-out]">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold text-gray-900">
+                {editingTx ? 'Chỉnh sửa giao dịch' : 'Thêm giao dịch mới'}
               </h2>
               <button
                 onClick={closeModal}
-                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                className="p-2 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all duration-200"
               >
                 <HiOutlineXMark className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               {/* Type toggle */}
-              <div className="flex rounded-lg border border-gray-300 overflow-hidden">
+              <div className="flex rounded-xl bg-gray-100 p-1 gap-1">
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, type: 'expense', category: '' })}
-                  className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+                  className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
                     formData.type === 'expense'
-                      ? 'bg-red-500 text-white'
-                      : 'bg-white text-gray-600 hover:bg-gray-50'
+                      ? 'bg-red-500 text-white shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
-                  Chi tieu
+                  Chi tiêu
                 </button>
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, type: 'income', category: '' })}
-                  className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+                  className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
                     formData.type === 'income'
-                      ? 'bg-green-500 text-white'
-                      : 'bg-white text-gray-600 hover:bg-gray-50'
+                      ? 'bg-emerald-500 text-white shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
-                  Thu nhap
+                  Thu nhập
                 </button>
               </div>
 
               {/* Amount */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">So tien (VND)</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                  Số tiền (VND)
+                </label>
                 <input
                   type="number"
                   value={formData.amount}
                   onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                   placeholder="0"
                   min="0"
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
                   required
                 />
               </div>
 
               {/* Category */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Danh muc</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                  Danh mục
+                </label>
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
                   required
                 >
-                  <option value="">Chon danh muc</option>
+                  <option value="">Chọn danh mục</option>
                   {filteredCategories.map((cat) => (
                     <option key={cat._id} value={cat._id}>
                       {cat.name}
@@ -377,24 +428,26 @@ const Transactions = () => {
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Mo ta</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                  Mô tả
+                </label>
                 <input
                   type="text"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Ghi chu giao dich"
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="Ghi chú giao dịch"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
                 />
               </div>
 
               {/* Date */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Ngay</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Ngày</label>
                 <input
                   type="date"
                   value={formData.date}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
                   required
                 />
               </div>
@@ -404,16 +457,16 @@ const Transactions = () => {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="flex-1 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="flex-1 py-3 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all duration-200"
                 >
-                  Huy
+                  Hủy
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+                  className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow-md active:scale-[0.98]"
                 >
-                  {submitting ? 'Dang luu...' : editingTx ? 'Cap nhat' : 'Them'}
+                  {submitting ? 'Đang lưu...' : editingTx ? 'Cập nhật' : 'Thêm'}
                 </button>
               </div>
             </form>
@@ -424,29 +477,54 @@ const Transactions = () => {
       {/* Delete Confirmation */}
       {deleteId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="fixed inset-0 bg-black/50" onClick={() => setDeleteId(null)} />
-          <div className="relative bg-white rounded-xl shadow-xl w-full max-w-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Xac nhan xoa</h3>
-            <p className="text-sm text-gray-500 mb-5">
-              Ban co chac chan muon xoa giao dich nay? Hanh dong nay khong the hoan tac.
-            </p>
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300"
+            onClick={() => setDeleteId(null)}
+          />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 animate-[modalIn_0.2s_ease-out]">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mb-4">
+                <HiOutlineExclamationTriangle className="w-7 h-7 text-red-500" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Xác nhận xóa</h3>
+              <p className="text-sm text-gray-500 mb-1">
+                Bạn có chắc chắn muốn xóa giao dịch này?
+              </p>
+              <p className="text-xs text-red-400 font-medium mb-6">
+                Hành động này không thể hoàn tác.
+              </p>
+            </div>
             <div className="flex gap-3">
               <button
                 onClick={() => setDeleteId(null)}
-                className="flex-1 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex-1 py-3 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all duration-200"
               >
-                Huy
+                Hủy
               </button>
               <button
                 onClick={handleDelete}
-                className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors"
+                className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.98]"
               >
-                Xoa
+                Xóa
               </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Modal animation keyframes */}
+      <style>{`
+        @keyframes modalIn {
+          from {
+            opacity: 0;
+            transform: scale(0.95) translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 };

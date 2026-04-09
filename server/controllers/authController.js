@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import { body, validationResult } from 'express-validator';
 import User from '../models/User.js';
 import { seedDefaultCategories } from './categoryController.js';
 
@@ -9,29 +8,19 @@ const generateToken = (id) => {
   });
 };
 
-export const registerValidation = [
-  body('name').trim().notEmpty().withMessage('Name is required'),
-  body('email').isEmail().withMessage('Please include a valid email'),
-  body('password')
-    .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters'),
-];
-
-export const loginValidation = [
-  body('email').isEmail().withMessage('Please include a valid email'),
-  body('password').notEmpty().withMessage('Password is required'),
-];
-
 // @desc    Register a new user
 // @route   POST /api/auth/register
 export const register = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Vui lòng nhập đầy đủ thông tin' });
     }
 
-    const { name, email, password } = req.body;
+    if (password.length < 6) {
+      return res.status(400).json({ message: 'Mật khẩu phải có ít nhất 6 ký tự' });
+    }
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -57,12 +46,11 @@ export const register = async (req, res) => {
 // @route   POST /api/auth/login
 export const login = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Vui lòng nhập email và mật khẩu' });
+    }
 
     const user = await User.findOne({ email });
     if (!user) {
