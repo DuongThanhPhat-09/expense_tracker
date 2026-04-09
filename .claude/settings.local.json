@@ -26,7 +26,14 @@
       "Bash(sc query:*)",
       "Bash(net start:*)",
       "Bash(npm run:*)",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Bash(curl -s http://localhost:5174)",
+      "Bash(curl -s http://localhost:5000)",
+      "Bash(node server.js)",
+      "Bash(curl -s -X POST http://localhost:5000/api/auth/register -H \"Content-Type: application/json\" -d '{\"name\":\"Test User\",\"email\":\"test2@example.com\",\"password\":\"123456\"}')",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(curl -s -X POST http://localhost:5000/api/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"test2@example.com\",\"password\":\"123456\"}')",
+      "Bash(pkill -f \"vite\")"
     ]
   }
 }
