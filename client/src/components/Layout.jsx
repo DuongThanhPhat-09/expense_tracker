@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -29,6 +30,15 @@ const Layout = () => {
   const location = useLocation();
 
   const currentPageTitle = pageTitles[location.pathname] || 'Tổng quan';
+
+  const [currentTime, setCurrentTime] = useState(new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+  const formattedDate = currentTime.toLocaleDateString('vi-VN', {
+    weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric',
+  });
 
   const handleLogout = () => {
     logout();
@@ -99,7 +109,7 @@ const Layout = () => {
             <div>
               <h1 className="text-lg font-semibold text-gray-900">{currentPageTitle}</h1>
               <p className="text-xs text-gray-500 -mt-0.5">
-                Xin chào, {user?.name || 'User'}
+                Xin chào, {user?.name || 'User'} · {formattedDate}
               </p>
             </div>
             <button
