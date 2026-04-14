@@ -7,6 +7,7 @@ import {
   HiOutlineArrowTrendingUp,
   HiOutlineArrowTrendingDown,
   HiOutlineBanknotes,
+  HiOutlineCreditCard,
   HiOutlineChevronLeft,
   HiOutlineChevronRight,
   HiOutlineArrowRight,
@@ -228,7 +229,7 @@ const Dashboard = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Tong thu */}
         <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg p-5 text-white">
           <div className="flex items-center gap-3 mb-3">
@@ -260,6 +261,17 @@ const Dashboard = () => {
             <span className="text-sm font-medium text-white/80">Số dư</span>
           </div>
           <p className="text-2xl font-bold">{formatVND(balance)}</p>
+        </div>
+
+        {/* Tong giao dich */}
+        <div className="bg-gradient-to-br from-purple-500 to-fuchsia-600 rounded-2xl shadow-lg p-5 text-white">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+              <HiOutlineCreditCard className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-sm font-medium text-white/80">Giao dịch</span>
+          </div>
+          <p className="text-2xl font-bold">{recentTransactions.length > 0 ? data?.recentTransactions?.length || 0 : 0} <span className="text-sm font-normal text-white/70">trong tháng</span></p>
         </div>
       </div>
 
