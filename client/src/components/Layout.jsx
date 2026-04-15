@@ -101,6 +101,9 @@ const Layout = () => {
             <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
             Đăng xuất
           </button>
+          <p className="text-[10px] text-gray-500 text-center mt-3 px-3">
+            © {currentTime.getFullYear()} Expense Tracker · v1.0
+          </p>
         </div>
       </aside>
 
