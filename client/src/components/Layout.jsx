@@ -40,6 +40,13 @@ const Layout = () => {
     weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric',
   });
 
+  const getGreeting = () => {
+    const hour = currentTime.getHours();
+    if (hour < 12) return 'Chào buổi sáng';
+    if (hour < 18) return 'Chào buổi chiều';
+    return 'Chào buổi tối';
+  };
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -115,7 +122,7 @@ const Layout = () => {
             <div>
               <h1 className="text-lg font-semibold text-gray-900">{currentPageTitle}</h1>
               <p className="text-xs text-gray-500 -mt-0.5">
-                Xin chào, {user?.name || 'User'} · {formattedDate}
+                {getGreeting()}, {user?.name || 'User'} · {formattedDate}
               </p>
             </div>
             <button
