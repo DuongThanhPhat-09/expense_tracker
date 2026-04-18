@@ -31,6 +31,11 @@ const Layout = () => {
 
   const currentPageTitle = pageTitles[location.pathname] || 'Tổng quan';
 
+  // Cập nhật tiêu đề tab trình duyệt theo trang hiện tại
+  useEffect(() => {
+    document.title = `${currentPageTitle} · Expense Tracker`;
+  }, [currentPageTitle]);
+
   const [currentTime, setCurrentTime] = useState(new Date());
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
