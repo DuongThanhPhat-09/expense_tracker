@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ScrollToTop from './ScrollToTop';
 import {
   HiOutlineChartPie,
   HiOutlineCreditCard,
@@ -177,6 +178,9 @@ const Layout = () => {
           </button>
         </div>
       </nav>
+
+      {/* Nút cuộn lên đầu trang */}
+      <ScrollToTop />
     </div>
   );
 };
